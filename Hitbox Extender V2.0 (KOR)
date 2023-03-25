@@ -1,0 +1,201 @@
+
+game.StarterGui:SetCore(
+	"SendNotification",
+	{
+		Title = "히트박스 조작기",
+		Text = "By $N#1249",
+	}
+)
+local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
+local UI = Material.Load({
+     Title = "$N의 히트박스 조작기 V2.0",
+     Style = 1,
+     SizeX = 350,
+     SizeY = 250,
+     Theme = "Dark"
+})
+
+local Page = UI.New({
+    Title = "히트박스 조작기 V2.0"
+})
+local Page2 = UI.New({
+    Title = "히트박스 설정"
+})
+
+Page.Slider({
+    Text = "히트박스 크기",
+    Callback = function(value)
+    _G.HeadSize = (value)
+    end,
+    Min = 0,
+    Max = 30,
+    Def = 10,
+})
+Page2.ColorPicker({
+    Text = "히트박스 색깔",
+    Default = Color3.fromRGB(0, 255, 0),
+    Callback = function(value)
+    _G.Color = (value)
+    end
+})
+Page2.Dropdown({
+    Text = "히트박스 투명도",
+    Callback = function(value)
+    _G.Transparency = (value)
+    end,
+    Options = {"0","0.25","0.35","0.40","0.45","0.50","0.55","0.60","0.65","0.70", "0.75","0.80", "0.85","0.90", "0.95", "1"}
+})
+Page2.Toggle({
+    Text = "히트박스 충돌",
+    Callback = function(value)
+    _G.Collision = (value)
+    end,
+    Enabled = false
+})
+Page.Button({
+    Text = "시작",
+    Callback = function()
+game.StarterGui:SetCore(
+	"SendNotification",
+	{
+		Title = "안티-플라이 V2",
+		Text = "안티-플라이 실행 중..",
+		Duration = "5"
+	}
+)
+-- // Constants \\ --
+-- [ Services ] --
+local Services = setmetatable({}, {__index = function(Self, Index)
+local NewService = game.GetService(game, Index)
+if NewService then
+Self[Index] = NewService
+end
+return NewService
+end})
+
+-- [ LocalPlayer ] --
+local LocalPlayer = Services.Players.LocalPlayer
+
+-- // Functions \\ --
+local function PlayerAdded(Player)
+   local Detected = false
+   local Character;
+   local PrimaryPart;
+
+   local function CharacterAdded(NewCharacter)
+       Character = NewCharacter
+       repeat
+           wait()
+           PrimaryPart = NewCharacter:FindFirstChild("HumanoidRootPart")
+       until PrimaryPart
+       Detected = false
+   end
+
+   CharacterAdded(Player.Character or Player.CharacterAdded:Wait())
+   Player.CharacterAdded:Connect(CharacterAdded)
+   Services.RunService.Heartbeat:Connect(function()
+       if (Character and Character:IsDescendantOf(workspace)) and (PrimaryPart and PrimaryPart:IsDescendantOf(Character)) then
+           if PrimaryPart.AssemblyAngularVelocity.Magnitude > 50 or PrimaryPart.AssemblyLinearVelocity.Magnitude > 100 then
+               if Detected == false then
+                   game.StarterGui:SetCore("ChatMakeSystemMessage", {
+                       Text = "Fling Exploit detected, Player: " .. tostring(Player);
+                       Color = Color3.fromRGB(255, 200, 0);
+                   })
+               end
+               Detected = true
+               for i,v in ipairs(Character:GetDescendants()) do
+                   if v:IsA("BasePart") then
+                       v.CanCollide = false
+                       v.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                       v.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                       v.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+                   end
+               end
+               PrimaryPart.CanCollide = false
+               PrimaryPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+               PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+               PrimaryPart.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+           end
+       end
+   end)
+end
+
+-- // Event Listeners \\ --
+for i,v in ipairs(Services.Players:GetPlayers()) do
+   if v ~= LocalPlayer then
+       PlayerAdded(v)
+   end
+end
+Services.Players.PlayerAdded:Connect(PlayerAdded)
+
+local LastPosition = nil
+Services.RunService.Heartbeat:Connect(function()
+   pcall(function()
+       local PrimaryPart = LocalPlayer.Character.PrimaryPart
+       if PrimaryPart.AssemblyLinearVelocity.Magnitude > 250 or PrimaryPart.AssemblyAngularVelocity.Magnitude > 250 then
+           PrimaryPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+           PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+           PrimaryPart.CFrame = LastPosition
+
+           game.StarterGui:SetCore("ChatMakeSystemMessage", {
+               Text = "You were flung. Neutralizing velocity.";
+               Color = Color3.fromRGB(255, 0, 0);
+           })
+       elseif PrimaryPart.AssemblyLinearVelocity.Magnitude < 50 or PrimaryPart.AssemblyAngularVelocity.Magnitude > 50 then
+           LastPosition = PrimaryPart.CFrame
+       end
+   end)
+end)
+wait()
+game.StarterGui:SetCore(
+	"SendNotification",
+	{
+		Title = "안티-플라이 실행 성공",
+		Text = "히트박스 조작기 실행 중..",
+		Duration  = "5"
+	}
+)
+
+
+
+_G.Disabled = true
+
+
+game:GetService('RunService').RenderStepped:connect(function()
+
+if _G.Disabled then
+
+for i,v in next, game:GetService('Players'):GetPlayers() do
+
+if v.Name ~= game:GetService('Players').LocalPlayer.Name then
+
+pcall(function()
+
+v.Character.HumanoidRootPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+
+v.Character.HumanoidRootPart.Transparency = (_G.Transparency)
+
+v.Character.HumanoidRootPart.BrickColor = BrickColor.new(_G.Color)
+
+v.Character.HumanoidRootPart.Material = ("Neon")
+
+v.Character.HumanoidRootPart.CanCollide = (_G.Collision)
+
+end)
+
+end
+
+end
+
+end
+
+end)
+game.StarterGui:SetCore(
+	"SendNotification",
+	{
+		Title = "히트박스 조작기 실행 성공",
+		Text = "준비를 성공적으로 마쳤습니다.",
+	}
+)
+    end
+})
