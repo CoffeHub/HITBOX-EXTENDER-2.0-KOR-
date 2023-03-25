@@ -16,7 +16,7 @@ local UI = Material.Load({
 })
 
 local Page = UI.New({
-    Title = "히트박스 조작기 V2.0"
+    Title = "히트박스 조작기"
 })
 local Page2 = UI.New({
     Title = "히트박스 설정"
